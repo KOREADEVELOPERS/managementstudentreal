@@ -1,3 +1,4 @@
+// src/pages/Registeredpage.js
 import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -24,7 +25,7 @@ const Registeredpage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const createdByEmail = localStorage.getItem("email"); // get logged-in user email
+    const createdByEmail = localStorage.getItem("email"); // logged-in user email
 
     if (!createdByEmail) {
       alert("You must be logged in to register a student.");
@@ -34,7 +35,7 @@ const Registeredpage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:9897/employees/fit?email=${createdByEmail}`,
+        `https://student-backend-w1bp.onrender.com/employees/fit?email=${createdByEmail}`,
         {
           method: "POST",
           headers: {
@@ -47,7 +48,7 @@ const Registeredpage = () => {
       if (response.ok) {
         alert("✅ Student registered successfully!");
         setStudent({ name: "", email: "", phone: "", password: "" });
-        navigate("/login"); // go to dashboard or view page
+        navigate("/view"); // ya /dashboard
       } else {
         const message = await response.text();
         alert("❌ Failed to register: " + message);
