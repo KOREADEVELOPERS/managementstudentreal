@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
-import StudentService from "../Service/Studentservice"; // ✅ Correct path
+import StudentService from "../Service/StudentService"; // ✅ Correct path
 
 const Addstudents = () => {
   const [students, setStudents] = useState([{ name: "", email: "", phone: "" }]);
@@ -64,7 +64,10 @@ const Addstudents = () => {
         setErrors([]);
         navigate("/features");
       })
-      .catch(() => alert("❌ Failed to save students."));
+      .catch((err) => {
+        console.error("Save failed:", err);
+        alert("❌ Failed to save students.");
+      });
   };
 
   return (
