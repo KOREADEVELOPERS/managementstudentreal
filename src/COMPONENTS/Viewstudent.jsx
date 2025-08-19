@@ -23,7 +23,7 @@ const Viewstudent = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:9897/employees/my?email=${email}`
+        `https://student-backend-w1bp.onrender.com/employees/my?email=${email}`
       );
       setStudents(response.data);
     } catch (error) {
