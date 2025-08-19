@@ -17,18 +17,20 @@ const Homepage_login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:9897/employees/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "https://student-backend-w1bp.onrender.com/employees/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       if (response.ok) {
         seterror("");
-         localStorage.setItem("email",email);
-         // clear error
+        localStorage.setItem("email", email);
         navigate("/features");
       } else {
         seterror("Invalid email or password");
@@ -121,13 +123,12 @@ const Homepage_login = () => {
           <div className="text-center mt-3">
             <small className="text-light">
               Don't have an account?{" "}
-              <a
+              <span
                 onClick={() => navigate("/Register")}
-                href="#"
-                className="text-info"
+                style={{ cursor: "pointer", color: "#0dcaf0" }}
               >
                 Register
-              </a>
+              </span>
             </small>
           </div>
         </form>
