@@ -1,3 +1,4 @@
+// src/components/Searchstudent.js
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -20,8 +21,9 @@ const Searchstudent = () => {
     }
 
     try {
+      // ✅ Localhost → Replace with deployed backend URL
       const response = await axios.get(
-        `http://localhost:9897/employees/find?email=${email}`
+        `https://student-backend-w1bp.onrender.com/employees/find?email=${email}`
       );
       setStudents(response.data || []);
     } catch (error) {
@@ -31,10 +33,11 @@ const Searchstudent = () => {
   };
 
   // 🔍 Filter students based on search input
-  const filteredStudents = students.filter((student) =>
-    student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.phone?.includes(searchTerm)
+  const filteredStudents = students.filter(
+    (student) =>
+      student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.phone?.includes(searchTerm)
   );
 
   return (
