@@ -1,8 +1,10 @@
 // src/Service/Studentservice.js
 import axios from "axios";
 
-const API_URL = "http://localhost:9897/employees";
+// ✅ Backend deployed URL
+const API_URL = "https://student-backend-w1bp.onrender.com/employees";
 
+// ✅ Save Multiple Students
 const saveMultipleStudents = (students, email) => {
   return axios.post(`${API_URL}/fit?email=${email}`, students);
 };
