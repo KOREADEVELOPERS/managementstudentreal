@@ -17,7 +17,8 @@ const Viewstudent = () => {
     const email = localStorage.getItem("email");
 
     if (!email) {
-      navigate("/login"); // ❌ Not logged in, redirect
+      alert("⚠️ You must login first!");
+      navigate("/login");
       return;
     }
 
@@ -28,6 +29,7 @@ const Viewstudent = () => {
       setStudents(response.data);
     } catch (error) {
       console.error("Error fetching students:", error);
+      alert("❌ Failed to fetch students. Please try again later.");
     }
   };
 
@@ -67,7 +69,7 @@ const Viewstudent = () => {
                         student.name?.trim() ||
                         student.email?.trim() ||
                         student.phone?.trim()
-                    ) // ⛔ remove empty rows
+                    )
                     .map((student, index) => (
                       <tr key={student.id || index}>
                         <td>{index + 1}</td>
