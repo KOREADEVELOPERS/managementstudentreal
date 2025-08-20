@@ -35,7 +35,7 @@ const Registeredpage = () => {
 
     try {
       const response = await fetch(
-        `https://student-backend-w1bp.onrender.com/employees/saveall?email=${createdByEmail}`,
+        `https://student-backend-w1bp.onrender.com/employees/fit?email=${createdByEmail}`,
         {
           method: "POST",
           headers: {
@@ -48,7 +48,7 @@ const Registeredpage = () => {
       if (response.ok) {
         alert("✅ Student registered successfully!");
         setStudent({ name: "", email: "", phone: "", password: "" });
-        navigate("/view");
+        navigate("/view"); // or dashboard
       } else {
         const message = await response.text();
         alert("❌ Failed to register: " + message);
