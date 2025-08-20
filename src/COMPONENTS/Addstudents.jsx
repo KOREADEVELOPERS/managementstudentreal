@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
-import StudentService from "../Service/Studentservice"; // ✅ Correct path
+import StudentService from "../Service/Studentservice";
 
 const AddStudents = () => {
   const [students, setStudents] = useState([{ name: "", email: "", phone: "" }]);
@@ -11,25 +11,25 @@ const AddStudents = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    AOS.init({ duration: 800 });
+    AOS.init({ duration: 1000 });
   }, []);
 
-  // 🔄 Input Change Handler
+  // 🔄 Handle input change
   const handleChange = (index, e) => {
-    const updatedStudents = [...students];
-    updatedStudents[index][e.target.name] = e.target.value;
-    setStudents(updatedStudents);
+    const updated = [...students];
+    updated[index][e.target.name] = e.target.value;
+    setStudents(updated);
   };
 
-  // ➕ Add New Student Form
+  // ➕ Add Student
   const addStudentForm = () => {
     setStudents([...students, { name: "", email: "", phone: "" }]);
   };
 
-  // ❌ Remove Student Form
+  // ❌ Remove Student
   const removeStudentForm = (index) => {
-    const updatedStudents = students.filter((_, i) => i !== index);
-    setStudents(updatedStudents);
+    const updated = students.filter((_, i) => i !== index);
+    setStudents(updated);
   };
 
   // ✅ Validation
@@ -39,28 +39,28 @@ const AddStudents = () => {
       const current = {};
       if (!student.name.trim()) current.name = "Name is required";
       if (!student.email.includes("@")) current.email = "Invalid email";
-      if (!/^\d{10}$/.test(student.phone)) current.phone = "Phone must be 10 digits";
+      if (!/^[0-9]{10}$/.test(student.phone)) current.phone = "Phone must be 10 digits";
       errs[i] = current;
     });
     setErrors(errs);
     return errs.every((err) => Object.keys(err).length === 0);
   };
 
-  // ✅ Form Submit
+  // 🚀 Submit
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     const email = localStorage.getItem("email");
     if (!email) {
-      alert("You are not logged in!");
+      alert("⚠ You are not logged in!");
       navigate("/login");
       return;
     }
 
     StudentService.saveMultipleStudents(students, email)
       .then(() => {
-        alert("✅ Students saved successfully!");
+        alert("✅ Students added successfully!");
         setStudents([{ name: "", email: "", phone: "" }]);
         setErrors([]);
         navigate("/features");
@@ -69,22 +69,39 @@ const AddStudents = () => {
   };
 
   return (
-    <div className="container my-5">
+    <div
+      className="d-flex justify-content-center align-items-center"
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(to right, #8360c3, #2ebf91)",
+        padding: "20px",
+      }}
+    >
       <div
-        className="bg-light p-4 rounded shadow"
-        data-aos="fade-up"
-        style={{ maxWidth: "900px", margin: "auto" }}
+        className="card shadow-lg p-4"
+        data-aos="zoom-in"
+        style={{
+          width: "100%",
+          maxWidth: "950px",
+          borderRadius: "20px",
+          background: "rgba(255, 255, 255, 0.95)",
+          backdropFilter: "blur(10px)",
+        }}
       >
-        <h2 className="mb-4 text-center text-primary fw-bold">Add Multiple Students</h2>
+        <h2 className="text-center mb-4 fw-bold text-primary">
+          ✨ Add Multiple Students
+        </h2>
 
         <form onSubmit={handleSubmit}>
           {students.map((student, index) => (
             <div
               key={index}
-              className="border rounded p-3 mb-4 bg-white shadow-sm position-relative"
+              className="border rounded p-3 mb-4 bg-light shadow-sm position-relative"
+              data-aos="fade-up"
             >
-              <h5 className="mb-3">Student {index + 1}</h5>
-
+              <h5 className="mb-3 text-secondary fw-semibold">
+                Student {index + 1}
+              </h5>
               <div className="row g-3">
                 <div className="col-md-4">
                   <label className="form-label">Name</label>
@@ -92,7 +109,7 @@ const AddStudents = () => {
                     type="text"
                     className={`form-control ${errors[index]?.name ? "is-invalid" : ""}`}
                     name="name"
-                    placeholder="Enter name"
+                    placeholder="Enter full name"
                     value={student.name}
                     onChange={(e) => handleChange(index, e)}
                   />
@@ -143,7 +160,7 @@ const AddStudents = () => {
           <div className="d-flex justify-content-between">
             <button
               type="button"
-              className="btn btn-outline-primary"
+              className="btn btn-outline-primary fw-bold"
               onClick={addStudentForm}
             >
               ➕ Add Another Student
@@ -158,7 +175,7 @@ const AddStudents = () => {
         <div className="text-center mt-4">
           <button
             onClick={() => navigate("/features")}
-            className="btn btn-secondary btn-sm"
+            className="btn btn-dark btn-sm fw-semibold"
           >
             ⬅ Back to Dashboard
           </button>
