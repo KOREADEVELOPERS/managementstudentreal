@@ -29,13 +29,13 @@ const Registeredpage = () => {
 
     if (!createdByEmail) {
       alert("You must be logged in to register a student.");
-      navigate("/login");
+      navigate("/login"); // ✅ old login page redirect
       return;
     }
 
     try {
       const response = await fetch(
-        `https://student-backend-w1bp.onrender.com/employees/fit?email=${createdByEmail}`,
+        `https://student-backend-w1bp.onrender.com/employees/saveall?email=${createdByEmail}`,
         {
           method: "POST",
           headers: {
@@ -48,7 +48,7 @@ const Registeredpage = () => {
       if (response.ok) {
         alert("✅ Student registered successfully!");
         setStudent({ name: "", email: "", phone: "", password: "" });
-        navigate("/view"); // or dashboard
+        navigate("/login"); // ✅ always redirect to old login page
       } else {
         const message = await response.text();
         alert("❌ Failed to register: " + message);
