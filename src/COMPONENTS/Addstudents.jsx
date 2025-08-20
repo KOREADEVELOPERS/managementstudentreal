@@ -1,198 +1,171 @@
-// src/pages/AddStudent.js
+// src/pages/AddStudents.js
 import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
+import StudentService from "../Service/Studentservice"; // ✅ Correct path
 
-const AddStudent = () => {
+const AddStudents = () => {
+  const [students, setStudents] = useState([{ name: "", email: "", phone: "" }]);
+  const [errors, setErrors] = useState([]);
   const navigate = useNavigate();
 
-  const [students, setStudents] = useState([
-    { name: "", email: "", phone: "", password: "" },
-  ]);
-
   useEffect(() => {
-    AOS.init({ duration: 1000 });
+    AOS.init({ duration: 800 });
   }, []);
 
-  // ✅ Handle change for multiple students
+  // 🔄 Input Change Handler
   const handleChange = (index, e) => {
-    const newStudents = [...students];
-    newStudents[index][e.target.name] = e.target.value;
-    setStudents(newStudents);
+    const updatedStudents = [...students];
+    updatedStudents[index][e.target.name] = e.target.value;
+    setStudents(updatedStudents);
   };
 
-  // ✅ Add new student form row
-  const handleAddRow = () => {
-    setStudents([
-      ...students,
-      { name: "", email: "", phone: "", password: "" },
-    ]);
+  // ➕ Add New Student Form
+  const addStudentForm = () => {
+    setStudents([...students, { name: "", email: "", phone: "" }]);
   };
 
-  // ✅ Remove student row
-  const handleRemoveRow = (index) => {
-    const newStudents = students.filter((_, i) => i !== index);
-    setStudents(newStudents);
+  // ❌ Remove Student Form
+  const removeStudentForm = (index) => {
+    const updatedStudents = students.filter((_, i) => i !== index);
+    setStudents(updatedStudents);
   };
 
-  // ✅ Submit all students
-  const handleSubmit = async (e) => {
+  // ✅ Validation
+  const validateForm = () => {
+    const errs = [];
+    students.forEach((student, i) => {
+      const current = {};
+      if (!student.name.trim()) current.name = "Name is required";
+      if (!student.email.includes("@")) current.email = "Invalid email";
+      if (!/^\d{10}$/.test(student.phone)) current.phone = "Phone must be 10 digits";
+      errs[i] = current;
+    });
+    setErrors(errs);
+    return errs.every((err) => Object.keys(err).length === 0);
+  };
+
+  // ✅ Form Submit
+  const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
-    const createdByEmail = localStorage.getItem("email");
-
-    if (!createdByEmail) {
-      alert("⚠️ You must be logged in to register a student.");
+    const email = localStorage.getItem("email");
+    if (!email) {
+      alert("You are not logged in!");
       navigate("/login");
       return;
     }
 
-    try {
-      const response = await fetch(
-        `https://student-backend-w1bp.onrender.com/employees/saveall?email=${createdByEmail}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(students), // ✅ send array
-        }
-      );
-
-      if (response.ok) {
-        alert("✅ Students registered successfully!");
-        setStudents([{ name: "", email: "", phone: "", password: "" }]);
-      } else {
-        const message = await response.text();
-        alert("❌ Failed to register: " + message);
-      }
-    } catch (error) {
-      console.error("Server error:", error);
-      alert("❌ Server error. Try again later.");
-    }
+    StudentService.saveMultipleStudents(students, email)
+      .then(() => {
+        alert("✅ Students saved successfully!");
+        setStudents([{ name: "", email: "", phone: "" }]);
+        setErrors([]);
+        navigate("/features");
+      })
+      .catch(() => alert("❌ Failed to save students."));
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundImage: "linear-gradient(to right, #8360c3, #2ebf91)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "20px",
-      }}
-    >
+    <div className="container my-5">
       <div
-        className="card p-4 shadow-lg"
+        className="bg-light p-4 rounded shadow"
         data-aos="fade-up"
-        style={{
-          maxWidth: "600px",
-          width: "100%",
-          borderRadius: "20px",
-          background: "rgba(255, 255, 255, 0.95)",
-        }}
+        style={{ maxWidth: "900px", margin: "auto" }}
       >
-        <h2 className="text-center mb-4 text-success fw-bold">
-          Student Registration
-        </h2>
+        <h2 className="mb-4 text-center text-primary fw-bold">Add Multiple Students</h2>
 
         <form onSubmit={handleSubmit}>
           {students.map((student, index) => (
             <div
               key={index}
-              className="border rounded p-3 mb-3"
-              style={{ background: "#f9f9f9" }}
+              className="border rounded p-3 mb-4 bg-white shadow-sm position-relative"
             >
-              <h5 className="fw-bold">Student {index + 1}</h5>
+              <h5 className="mb-3">Student {index + 1}</h5>
 
-              <div className="mb-3">
-                <label className="form-label fw-semibold">Full Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="name"
-                  value={student.name}
-                  onChange={(e) => handleChange(index, e)}
-                  required
-                  placeholder="Enter full name"
-                />
+              <div className="row g-3">
+                <div className="col-md-4">
+                  <label className="form-label">Name</label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors[index]?.name ? "is-invalid" : ""}`}
+                    name="name"
+                    placeholder="Enter name"
+                    value={student.name}
+                    onChange={(e) => handleChange(index, e)}
+                  />
+                  <div className="invalid-feedback">{errors[index]?.name}</div>
+                </div>
+
+                <div className="col-md-4">
+                  <label className="form-label">Email</label>
+                  <input
+                    type="email"
+                    className={`form-control ${errors[index]?.email ? "is-invalid" : ""}`}
+                    name="email"
+                    placeholder="Enter email"
+                    value={student.email}
+                    onChange={(e) => handleChange(index, e)}
+                  />
+                  <div className="invalid-feedback">{errors[index]?.email}</div>
+                </div>
+
+                <div className="col-md-3">
+                  <label className="form-label">Phone</label>
+                  <input
+                    type="tel"
+                    className={`form-control ${errors[index]?.phone ? "is-invalid" : ""}`}
+                    name="phone"
+                    placeholder="10-digit phone"
+                    value={student.phone}
+                    onChange={(e) => handleChange(index, e)}
+                  />
+                  <div className="invalid-feedback">{errors[index]?.phone}</div>
+                </div>
+
+                {students.length > 1 && (
+                  <div className="col-md-1 d-flex align-items-end">
+                    <button
+                      type="button"
+                      className="btn btn-outline-danger btn-sm"
+                      onClick={() => removeStudentForm(index)}
+                    >
+                      ❌
+                    </button>
+                  </div>
+                )}
               </div>
-
-              <div className="mb-3">
-                <label className="form-label fw-semibold">Email</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  name="email"
-                  value={student.email}
-                  onChange={(e) => handleChange(index, e)}
-                  required
-                  placeholder="Enter student's email"
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label fw-semibold">Phone</label>
-                <input
-                  type="tel"
-                  className="form-control"
-                  name="phone"
-                  value={student.phone}
-                  onChange={(e) => handleChange(index, e)}
-                  required
-                  placeholder="Enter phone number"
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label fw-semibold">Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  name="password"
-                  value={student.password}
-                  onChange={(e) => handleChange(index, e)}
-                  required
-                  placeholder="Create password"
-                />
-              </div>
-
-              {students.length > 1 && (
-                <button
-                  type="button"
-                  className="btn btn-danger btn-sm"
-                  onClick={() => handleRemoveRow(index)}
-                >
-                  ❌ Remove Student
-                </button>
-              )}
             </div>
           ))}
 
-          <button
-            type="button"
-            className="btn btn-secondary w-100 mb-3"
-            onClick={handleAddRow}
-          >
-            ➕ Add Another Student
-          </button>
+          <div className="d-flex justify-content-between">
+            <button
+              type="button"
+              className="btn btn-outline-primary"
+              onClick={addStudentForm}
+            >
+              ➕ Add Another Student
+            </button>
 
-          <button type="submit" className="btn btn-success w-100 fw-bold">
-            Save All Students
-          </button>
-
-          <div className="text-center mt-3">
-            <small>
-              Back to{" "}
-              <a href="/features" className="text-primary fw-semibold">
-                Dashboard
-              </a>
-            </small>
+            <button type="submit" className="btn btn-success fw-bold">
+              ✅ Submit All
+            </button>
           </div>
         </form>
+
+        <div className="text-center mt-4">
+          <button
+            onClick={() => navigate("/features")}
+            className="btn btn-secondary btn-sm"
+          >
+            ⬅ Back to Dashboard
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
-export default AddStudent;
+export default AddStudents;
