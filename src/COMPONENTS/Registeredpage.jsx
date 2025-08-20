@@ -1,5 +1,7 @@
 // src/pages/Registeredpage.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
 
 const Registeredpage = () => {
@@ -10,12 +12,17 @@ const Registeredpage = () => {
     password: "",
   });
 
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+  }, []);
+
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const response = await fetch(
         "https://student-backend-w1bp.onrender.com/employees/register",
@@ -28,7 +35,8 @@ const Registeredpage = () => {
 
       if (response.ok) {
         alert("✅ User registered successfully! Please login.");
-        navigate("/login"); // हमेशा पुराने login पर redirect
+        setUser({ name: "", email: "", password: "" });
+        navigate("/login"); // always go to login page
       } else {
         const msg = await response.text();
         alert("❌ Registration failed: " + msg);
@@ -40,12 +48,33 @@ const Registeredpage = () => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div className="card p-4 shadow" style={{ width: "400px" }}>
-        <h3 className="text-center mb-3">User Signup</h3>
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundImage: "linear-gradient(to right, #1f4037, #99f2c8)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "20px",
+      }}
+    >
+      <div
+        className="card p-4 shadow-lg"
+        data-aos="fade-up"
+        style={{
+          maxWidth: "500px",
+          width: "100%",
+          borderRadius: "20px",
+          background: "rgba(255, 255, 255, 0.95)",
+        }}
+      >
+        <h2 className="text-center mb-4 text-success fw-bold">
+          User Registration
+        </h2>
+
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label>Name</label>
+            <label className="form-label fw-semibold">Full Name</label>
             <input
               type="text"
               className="form-control"
@@ -53,10 +82,12 @@ const Registeredpage = () => {
               value={user.name}
               onChange={handleChange}
               required
+              placeholder="Enter full name"
             />
           </div>
+
           <div className="mb-3">
-            <label>Email</label>
+            <label className="form-label fw-semibold">Email</label>
             <input
               type="email"
               className="form-control"
@@ -64,10 +95,12 @@ const Registeredpage = () => {
               value={user.email}
               onChange={handleChange}
               required
+              placeholder="Enter email"
             />
           </div>
+
           <div className="mb-3">
-            <label>Password</label>
+            <label className="form-label fw-semibold">Password</label>
             <input
               type="password"
               className="form-control"
@@ -75,11 +108,22 @@ const Registeredpage = () => {
               value={user.password}
               onChange={handleChange}
               required
+              placeholder="Create password"
             />
           </div>
-          <button type="submit" className="btn btn-success w-100">
+
+          <button type="submit" className="btn btn-success w-100 fw-bold">
             Register
           </button>
+
+          <div className="text-center mt-3">
+            <small>
+              Already have an account?{" "}
+              <a href="/login" className="text-primary fw-semibold">
+                Login here
+              </a>
+            </small>
+          </div>
         </form>
       </div>
     </div>
