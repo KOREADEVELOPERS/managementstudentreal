@@ -1,5 +1,7 @@
 // src/pages/AddStudent.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
 
 const AddStudent = () => {
@@ -11,17 +13,22 @@ const AddStudent = () => {
     password: "",
   });
 
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+  }, []);
+
   const handleChange = (e) => {
     setStudent({ ...student, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const createdByEmail = localStorage.getItem("email");
+
+    const createdByEmail = localStorage.getItem("email"); // ✅ logged-in user email
 
     if (!createdByEmail) {
-      alert("⚠️ Please login first!");
-      navigate("/login");
+      alert("⚠️ You must be logged in to add students.");
+      navigate("/login"); // redirect to login
       return;
     }
 
@@ -31,31 +38,52 @@ const AddStudent = () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify([student]), // backend expects list
+          body: JSON.stringify([student]), // backend expects an array
         }
       );
 
       if (response.ok) {
-        alert("✅ Student added successfully!");
+        alert("✅ Student registered successfully!");
         setStudent({ name: "", email: "", phone: "", password: "" });
-        navigate("/view");
+        navigate("/view"); // redirect to view students
       } else {
         const msg = await response.text();
-        alert("❌ Failed to save student: " + msg);
+        alert("❌ Failed to register student: " + msg);
       }
     } catch (error) {
-      console.error("Add student error:", error);
+      console.error("Server error:", error);
       alert("❌ Server error. Try again later.");
     }
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div className="card p-4 shadow" style={{ width: "400px" }}>
-        <h3 className="text-center mb-3">Add Student</h3>
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundImage: "linear-gradient(to right, #283c86, #45a247)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "20px",
+      }}
+    >
+      <div
+        className="card p-4 shadow-lg"
+        data-aos="fade-up"
+        style={{
+          maxWidth: "500px",
+          width: "100%",
+          borderRadius: "20px",
+          background: "rgba(255, 255, 255, 0.95)",
+        }}
+      >
+        <h2 className="text-center mb-4 text-primary fw-bold">
+          Register New Student
+        </h2>
+
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label>Name</label>
+            <label className="form-label fw-semibold">Full Name</label>
             <input
               type="text"
               className="form-control"
@@ -63,10 +91,12 @@ const AddStudent = () => {
               value={student.name}
               onChange={handleChange}
               required
+              placeholder="Enter student's name"
             />
           </div>
+
           <div className="mb-3">
-            <label>Email</label>
+            <label className="form-label fw-semibold">Email</label>
             <input
               type="email"
               className="form-control"
@@ -74,10 +104,12 @@ const AddStudent = () => {
               value={student.email}
               onChange={handleChange}
               required
+              placeholder="Enter student's email"
             />
           </div>
+
           <div className="mb-3">
-            <label>Phone</label>
+            <label className="form-label fw-semibold">Phone</label>
             <input
               type="tel"
               className="form-control"
@@ -85,10 +117,12 @@ const AddStudent = () => {
               value={student.phone}
               onChange={handleChange}
               required
+              placeholder="Enter phone number"
             />
           </div>
+
           <div className="mb-3">
-            <label>Password</label>
+            <label className="form-label fw-semibold">Password</label>
             <input
               type="password"
               className="form-control"
@@ -96,11 +130,22 @@ const AddStudent = () => {
               value={student.password}
               onChange={handleChange}
               required
+              placeholder="Create student password"
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">
-            Save Student
+
+          <button type="submit" className="btn btn-success w-100 fw-bold">
+            Register Student
           </button>
+
+          <div className="text-center mt-3">
+            <small>
+              Want to check students?{" "}
+              <a href="/view" className="text-primary fw-semibold">
+                View Students
+              </a>
+            </small>
+          </div>
         </form>
       </div>
     </div>
