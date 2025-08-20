@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+// src/pages/Homepage_login.js
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StudentService from "../Service/Studentservice";
 
@@ -7,13 +8,6 @@ const Homepage_login = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // अगर पहले से login है तो features पर भेज दो
-    if (localStorage.getItem("email")) {
-      navigate("/features");
-    }
-  }, [navigate]);
-
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -21,12 +15,11 @@ const Homepage_login = () => {
       if (response.status === 200) {
         // ✅ save email in localStorage
         localStorage.setItem("email", response.data);
-        alert("✅ Login successful!");
+        alert("Login successful!");
         navigate("/features");
       }
     } catch (error) {
-      console.error("Login error:", error.response?.data || error.message);
-      alert("❌ Invalid credentials, please try again.");
+      alert("Invalid credentials, please try again.");
     }
   };
 
