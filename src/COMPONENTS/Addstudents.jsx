@@ -1,45 +1,49 @@
 // src/pages/AddStudent.js
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { useNavigate } from "react-router-dom";
 
 const AddStudent = () => {
   const navigate = useNavigate();
+
   const [students, setStudents] = useState([
     { name: "", email: "", phone: "", password: "" },
   ]);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
   }, []);
 
-  // 🔹 update single field of one student
+  // ✅ Handle change for multiple students
   const handleChange = (index, e) => {
     const newStudents = [...students];
     newStudents[index][e.target.name] = e.target.value;
     setStudents(newStudents);
   };
 
-  // 🔹 add new blank student row
+  // ✅ Add new student form row
   const handleAddRow = () => {
-    setStudents([...students, { name: "", email: "", phone: "", password: "" }]);
+    setStudents([
+      ...students,
+      { name: "", email: "", phone: "", password: "" },
+    ]);
   };
 
-  // 🔹 remove a student row
+  // ✅ Remove student row
   const handleRemoveRow = (index) => {
     const newStudents = students.filter((_, i) => i !== index);
     setStudents(newStudents);
   };
 
-  // 🔹 submit all students
+  // ✅ Submit all students
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const createdByEmail = localStorage.getItem("email");
+
     if (!createdByEmail) {
-      alert("⚠️ Please login first.");
+      alert("⚠️ You must be logged in to register a student.");
       navigate("/login");
       return;
     }
@@ -49,24 +53,21 @@ const AddStudent = () => {
         `https://student-backend-w1bp.onrender.com/employees/saveall?email=${createdByEmail}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(students), // ✅ send full array
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(students), // ✅ send array
         }
       );
 
       if (response.ok) {
-        alert("✅ Students added successfully!");
+        alert("✅ Students registered successfully!");
         setStudents([{ name: "", email: "", phone: "", password: "" }]);
-        setError("");
       } else {
-        const msg = await response.text();
-        setError(msg || "Failed to save students.");
+        const message = await response.text();
+        alert("❌ Failed to register: " + message);
       }
-    } catch (err) {
-      console.error("Add students error:", err);
-      setError("❌ Server error, please try again later.");
+    } catch (error) {
+      console.error("Server error:", error);
+      alert("❌ Server error. Try again later.");
     }
   };
 
@@ -74,10 +75,7 @@ const AddStudent = () => {
     <div
       style={{
         minHeight: "100vh",
-        backgroundImage:
-          "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundImage: "linear-gradient(to right, #8360c3, #2ebf91)",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -85,20 +83,17 @@ const AddStudent = () => {
       }}
     >
       <div
-        className="card shadow-lg p-4"
-        data-aos="zoom-in"
+        className="card p-4 shadow-lg"
+        data-aos="fade-up"
         style={{
           maxWidth: "600px",
           width: "100%",
-          backdropFilter: "blur(12px)",
-          backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderRadius: "20px",
-          border: "1px solid rgba(255, 255, 255, 0.2)",
-          color: "white",
+          background: "rgba(255, 255, 255, 0.95)",
         }}
       >
-        <h2 className="text-center mb-4 text-light fw-bold">
-          ➕ Add Multiple Students
+        <h2 className="text-center mb-4 text-success fw-bold">
+          Student Registration
         </h2>
 
         <form onSubmit={handleSubmit}>
@@ -106,12 +101,12 @@ const AddStudent = () => {
             <div
               key={index}
               className="border rounded p-3 mb-3"
-              style={{ background: "rgba(255,255,255,0.1)" }}
+              style={{ background: "#f9f9f9" }}
             >
-              <h5 className="text-light">Student {index + 1}</h5>
+              <h5 className="fw-bold">Student {index + 1}</h5>
 
-              <div className="mb-2">
-                <label className="form-label text-light">Full Name</label>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Full Name</label>
                 <input
                   type="text"
                   className="form-control"
@@ -120,16 +115,11 @@ const AddStudent = () => {
                   onChange={(e) => handleChange(index, e)}
                   required
                   placeholder="Enter full name"
-                  style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.2)",
-                    color: "white",
-                    border: "none",
-                  }}
                 />
               </div>
 
-              <div className="mb-2">
-                <label className="form-label text-light">Email</label>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Email</label>
                 <input
                   type="email"
                   className="form-control"
@@ -137,17 +127,12 @@ const AddStudent = () => {
                   value={student.email}
                   onChange={(e) => handleChange(index, e)}
                   required
-                  placeholder="Enter email"
-                  style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.2)",
-                    color: "white",
-                    border: "none",
-                  }}
+                  placeholder="Enter student's email"
                 />
               </div>
 
-              <div className="mb-2">
-                <label className="form-label text-light">Phone</label>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Phone</label>
                 <input
                   type="tel"
                   className="form-control"
@@ -155,17 +140,12 @@ const AddStudent = () => {
                   value={student.phone}
                   onChange={(e) => handleChange(index, e)}
                   required
-                  placeholder="Enter phone"
-                  style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.2)",
-                    color: "white",
-                    border: "none",
-                  }}
+                  placeholder="Enter phone number"
                 />
               </div>
 
-              <div className="mb-2">
-                <label className="form-label text-light">Password</label>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Password</label>
                 <input
                   type="password"
                   className="form-control"
@@ -174,29 +154,20 @@ const AddStudent = () => {
                   onChange={(e) => handleChange(index, e)}
                   required
                   placeholder="Create password"
-                  style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.2)",
-                    color: "white",
-                    border: "none",
-                  }}
                 />
               </div>
 
               {students.length > 1 && (
                 <button
                   type="button"
-                  className="btn btn-danger btn-sm mt-2"
+                  className="btn btn-danger btn-sm"
                   onClick={() => handleRemoveRow(index)}
                 >
-                  ❌ Remove
+                  ❌ Remove Student
                 </button>
               )}
             </div>
           ))}
-
-          {error && (
-            <div className="text-danger mb-3 text-center fw-bold">{error}</div>
-          )}
 
           <button
             type="button"
@@ -211,13 +182,9 @@ const AddStudent = () => {
           </button>
 
           <div className="text-center mt-3">
-            <small className="text-light">
-              🔙 Back to{" "}
-              <a
-                onClick={() => navigate("/features")}
-                href="#"
-                className="text-info"
-              >
+            <small>
+              Back to{" "}
+              <a href="/features" className="text-primary fw-semibold">
                 Dashboard
               </a>
             </small>
