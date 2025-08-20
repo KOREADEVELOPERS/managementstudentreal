@@ -1,8 +1,8 @@
 // src/pages/AddStudent.js
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { useNavigate } from "react-router-dom";
 
 const AddStudent = () => {
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ const AddStudent = () => {
     phone: "",
     password: "",
   });
+  const [error, setError] = useState("");
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -24,11 +25,10 @@ const AddStudent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const createdByEmail = localStorage.getItem("email"); // ✅ logged-in user email
-
+    const createdByEmail = localStorage.getItem("email");
     if (!createdByEmail) {
-      alert("⚠️ You must be logged in to add students.");
-      navigate("/login"); // redirect to login
+      alert("⚠️ Please login first.");
+      navigate("/login");
       return;
     }
 
@@ -37,22 +37,24 @@ const AddStudent = () => {
         `https://student-backend-w1bp.onrender.com/employees/saveall?email=${createdByEmail}`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify([student]), // backend expects an array
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify([student]), // ✅ backend expects array
         }
       );
 
       if (response.ok) {
-        alert("✅ Student registered successfully!");
+        alert("✅ Student added successfully!");
         setStudent({ name: "", email: "", phone: "", password: "" });
-        navigate("/view"); // redirect to view students
+        setError("");
       } else {
         const msg = await response.text();
-        alert("❌ Failed to register student: " + msg);
+        setError(msg || "Failed to save student.");
       }
-    } catch (error) {
-      console.error("Server error:", error);
-      alert("❌ Server error. Try again later.");
+    } catch (err) {
+      console.error("Add student error:", err);
+      setError("❌ Server error, please try again later.");
     }
   };
 
@@ -60,7 +62,10 @@ const AddStudent = () => {
     <div
       style={{
         minHeight: "100vh",
-        backgroundImage: "linear-gradient(to right, #283c86, #45a247)",
+        backgroundImage:
+          "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1950&q=80')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -68,22 +73,25 @@ const AddStudent = () => {
       }}
     >
       <div
-        className="card p-4 shadow-lg"
-        data-aos="fade-up"
+        className="card shadow-lg p-4"
+        data-aos="zoom-in"
         style={{
           maxWidth: "500px",
           width: "100%",
+          backdropFilter: "blur(12px)",
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderRadius: "20px",
-          background: "rgba(255, 255, 255, 0.95)",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          color: "white",
         }}
       >
-        <h2 className="text-center mb-4 text-primary fw-bold">
-          Register New Student
+        <h2 className="text-center mb-4 text-light fw-bold">
+          ➕ Add New Student
         </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label fw-semibold">Full Name</label>
+            <label className="form-label text-light">Full Name</label>
             <input
               type="text"
               className="form-control"
@@ -92,11 +100,16 @@ const AddStudent = () => {
               onChange={handleChange}
               required
               placeholder="Enter student's name"
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.2)",
+                color: "white",
+                border: "none",
+              }}
             />
           </div>
 
           <div className="mb-3">
-            <label className="form-label fw-semibold">Email</label>
+            <label className="form-label text-light">Email</label>
             <input
               type="email"
               className="form-control"
@@ -105,11 +118,16 @@ const AddStudent = () => {
               onChange={handleChange}
               required
               placeholder="Enter student's email"
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.2)",
+                color: "white",
+                border: "none",
+              }}
             />
           </div>
 
           <div className="mb-3">
-            <label className="form-label fw-semibold">Phone</label>
+            <label className="form-label text-light">Phone</label>
             <input
               type="tel"
               className="form-control"
@@ -118,11 +136,16 @@ const AddStudent = () => {
               onChange={handleChange}
               required
               placeholder="Enter phone number"
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.2)",
+                color: "white",
+                border: "none",
+              }}
             />
           </div>
 
           <div className="mb-3">
-            <label className="form-label fw-semibold">Password</label>
+            <label className="form-label text-light">Password</label>
             <input
               type="password"
               className="form-control"
@@ -130,19 +153,32 @@ const AddStudent = () => {
               value={student.password}
               onChange={handleChange}
               required
-              placeholder="Create student password"
+              placeholder="Create password"
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.2)",
+                color: "white",
+                border: "none",
+              }}
             />
           </div>
 
+          {error && (
+            <div className="text-danger mb-3 text-center fw-bold">{error}</div>
+          )}
+
           <button type="submit" className="btn btn-success w-100 fw-bold">
-            Register Student
+            Save Student
           </button>
 
           <div className="text-center mt-3">
-            <small>
-              Want to check students?{" "}
-              <a href="/view" className="text-primary fw-semibold">
-                View Students
+            <small className="text-light">
+              🔙 Back to{" "}
+              <a
+                onClick={() => navigate("/features")}
+                href="#"
+                className="text-info"
+              >
+                Dashboard
               </a>
             </small>
           </div>
