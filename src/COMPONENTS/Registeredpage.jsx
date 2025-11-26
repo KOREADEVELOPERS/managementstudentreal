@@ -6,14 +6,10 @@ import { useNavigate } from "react-router-dom";
 
 const Registeredpage = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const [user, setUser] = useState({ name: "", email: "", password: "" });
 
   useEffect(() => {
-    AOS.init({ duration: 1000 });
+    AOS.init({ duration: 1200 });
   }, []);
 
   const handleChange = (e) => {
@@ -36,7 +32,7 @@ const Registeredpage = () => {
       if (response.ok) {
         alert("✅ User registered successfully! Please login.");
         setUser({ name: "", email: "", password: "" });
-        navigate("/login"); // always go to login page
+        navigate("/login");
       } else {
         const msg = await response.text();
         alert("❌ Registration failed: " + msg);
@@ -49,23 +45,21 @@ const Registeredpage = () => {
 
   return (
     <div
+      className="d-flex align-items-center justify-content-center"
       style={{
         minHeight: "100vh",
-        backgroundImage: "linear-gradient(to right, #1f4037, #99f2c8)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        background: "linear-gradient(135deg, #1f4037, #99f2c8)",
         padding: "20px",
       }}
     >
       <div
-        className="card p-4 shadow-lg"
+        className="card shadow-lg p-5"
         data-aos="fade-up"
         style={{
-          maxWidth: "500px",
+          maxWidth: "450px",
           width: "100%",
-          borderRadius: "20px",
-          background: "rgba(255, 255, 255, 0.95)",
+          borderRadius: "25px",
+          background: "rgba(255,255,255,0.95)",
         }}
       >
         <h2 className="text-center mb-4 text-success fw-bold">
@@ -77,12 +71,13 @@ const Registeredpage = () => {
             <label className="form-label fw-semibold">Full Name</label>
             <input
               type="text"
-              className="form-control"
+              className="form-control rounded-pill shadow-sm"
               name="name"
               value={user.name}
               onChange={handleChange}
               required
               placeholder="Enter full name"
+              style={{ border: "1px solid #ced4da" }}
             />
           </div>
 
@@ -90,29 +85,41 @@ const Registeredpage = () => {
             <label className="form-label fw-semibold">Email</label>
             <input
               type="email"
-              className="form-control"
+              className="form-control rounded-pill shadow-sm"
               name="email"
               value={user.email}
               onChange={handleChange}
               required
               placeholder="Enter email"
+              style={{ border: "1px solid #ced4da" }}
             />
           </div>
 
-          <div className="mb-3">
+          <div className="mb-4">
             <label className="form-label fw-semibold">Password</label>
             <input
               type="password"
-              className="form-control"
+              className="form-control rounded-pill shadow-sm"
               name="password"
               value={user.password}
               onChange={handleChange}
               required
               placeholder="Create password"
+              style={{ border: "1px solid #ced4da" }}
             />
           </div>
 
-          <button type="submit" className="btn btn-success w-100 fw-bold">
+          <button
+            type="submit"
+            className="btn btn-success w-100 fw-bold rounded-pill shadow"
+            style={{
+              padding: "10px 0",
+              fontSize: "1.1rem",
+              transition: "0.3s",
+            }}
+            onMouseOver={(e) => (e.target.style.opacity = 0.85)}
+            onMouseOut={(e) => (e.target.style.opacity = 1)}
+          >
             Register
           </button>
 
