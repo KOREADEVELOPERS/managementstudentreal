@@ -3,7 +3,7 @@ import AOS from "aos";
 import "aos/dist/aos.css"; 
 import { useNavigate } from "react-router-dom";
 import StudentService from "../Service/Studentservice";
-import "./LoginPage.css"; // OPTIONAL CUSTOM CSS FILE
+// OPTIONAL CUSTOM CSS FILE
 
 const Homepage_login = () => {
   const navigate = useNavigate();
