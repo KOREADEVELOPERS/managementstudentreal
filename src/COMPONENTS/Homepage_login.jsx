@@ -1,14 +1,15 @@
-// src/pages/Homepage_login.js
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { useNavigate } from "react-router-dom";
+import StudentService from "../Service/StudentService";
+import "./LoginPage.css"; // OPTIONAL CUSTOM CSS FILE
 
 const Homepage_login = () => {
   const navigate = useNavigate();
-  const [email, setemail] = useState("");
-  const [password, setpassword] = useState("");
-  const [error, seterror] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -16,120 +17,78 @@ const Homepage_login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await fetch(
-        "https://student-backend-w1bp.onrender.com/employees/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        }
-      );
-
-      if (response.ok) {
-        const loggedEmail = await response.text(); // backend returns email
-        localStorage.setItem("email", loggedEmail); // ✅ save email
-        seterror("");
+      const res = await StudentService.loginUser({ email, password });
+      if (res.status === 200) {
+        localStorage.setItem("email", email);
+        setError("");
         navigate("/features");
       } else {
-        seterror("Invalid email or password");
+        setError("Invalid email or password");
       }
     } catch (err) {
-      console.error("Login error:", err);
-      seterror("Something went wrong. Please try again.");
+      setError("Something went wrong");
     }
   };
 
   return (
-    <div
-      className="login-page"
-      style={{
-        minHeight: "100vh",
-        backgroundImage:
-          "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1950&q=80')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "20px",
-      }}
-    >
-      <div
-        className="card shadow-lg p-4"
-        data-aos="zoom-in"
-        style={{
-          maxWidth: "400px",
-          width: "100%",
-          backdropFilter: "blur(12px)",
-          backgroundColor: "rgba(255, 255, 255, 0.1)",
-          borderRadius: "20px",
-          border: "1px solid rgba(255, 255, 255, 0.2)",
-          color: "white",
-        }}
-      >
-        <div className="text-center mb-3">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/5087/5087579.png"
-            alt="Login"
-            style={{ width: "70px" }}
-          />
-          <h3 className="mt-2 text-light">Student Login</h3>
-        </div>
+    <div className="login-page d-flex justify-content-center align-items-center">
+      <div className="card login-card shadow-lg p-4" data-aos="zoom-in">
+
+        <h3 className="text-center mb-4 text-primary fw-bold">Student Login</h3>
 
         <form onSubmit={handleLogin}>
           <div className="mb-3">
-            <label className="form-label text-light">Email address</label>
+            <label className="form-label fw-semibold">Email address</label>
             <input
               type="email"
-              className="form-control"
-              placeholder="Enter email"
+              className="form-control rounded-pill"
               required
               value={email}
-              onChange={(e) => setemail(e.target.value)}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
-                color: "white",
-                border: "none",
-              }}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="mb-3">
-            <label className="form-label text-light">Password</label>
+
+          <div className="mb-2">
+            <label className="form-label fw-semibold">Password</label>
             <input
               type="password"
-              className="form-control"
-              placeholder="Password"
+              className="form-control rounded-pill"
               required
               value={password}
-              onChange={(e) => setpassword(e.target.value)}
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
-                color: "white",
-                border: "none",
-              }}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
-          {error && (
-            <div className="text-danger mb-3 text-center">{error}</div>
-          )}
+          {/* Forgot Password Link */}
+          <div className="text-end mb-3">
+            <span
+              className="forgot-text"
+              onClick={() => navigate("/forgot-password")}
+            >
+              Forgot Password?
+            </span>
+          </div>
 
-          <button type="submit" className="btn btn-primary w-100 fw-bold">
+          {error && <div className="text-danger mb-3 text-center">{error}</div>}
+
+          <button
+            type="submit"
+            className="btn btn-primary w-100 fw-bold rounded-pill"
+          >
             Login
           </button>
 
           <div className="text-center mt-3">
-            <small className="text-light">
-              Don't have an account?{" "}
-              <a
-                onClick={() => navigate("/Register")}
-                href="#"
-                className="text-info"
+            <small>
+              Don't have an account?
+              <span
+                className="register-link"
+                onClick={() => navigate("/register")}
               >
+                {" "}
                 Register
-              </a>
+              </span>
             </small>
           </div>
         </form>
