@@ -3,11 +3,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const UpdateStudent = () => {
-  const [id, setId] = useState(""); // MongoDB ID (string)
+  const [id, setId] = useState("");
   const [student, setStudent] = useState({
     name: "",
     email: "",
     phone: "",
+    address: "",
+    course: "",
+    createdBy: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -27,13 +30,8 @@ const UpdateStudent = () => {
         `https://student-backend-w1bp.onrender.com/employees/get/${id}`
       );
 
-      if (response.data) {
-        setStudent(response.data); // Autofill data
-        setFound(true);
-      } else {
-        alert("❌ No student found with this ID");
-        setFound(false);
-      }
+      setStudent(response.data); // Autofill data
+      setFound(true);
     } catch (error) {
       console.error(error);
       alert("❌ Student not found!");
@@ -62,8 +60,8 @@ const UpdateStudent = () => {
       setLoading(true);
 
       await axios.put(
-        `https://student-backend-w1bp.onrender.com/employees/update/${id}?email=${userEmail}`,
-        student
+        `https://student-backend-w1bp.onrender.com/employees/update/${id}`,
+        { ...student, createdBy: userEmail }
       );
 
       alert("✅ Student updated successfully!");
@@ -97,7 +95,7 @@ const UpdateStudent = () => {
         <div className="mb-3">
           <label className="form-label fw-semibold">Student ID</label>
           <input
-            type="text" // ✅ change here
+            type="text"
             className="form-control"
             placeholder="Enter Student ID (e.g., 68e081913932463667)"
             value={id}
@@ -145,6 +143,28 @@ const UpdateStudent = () => {
                 className="form-control"
                 name="phone"
                 value={student.phone}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Address</label>
+              <input
+                type="text"
+                className="form-control"
+                name="address"
+                value={student.address || ""}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Course</label>
+              <input
+                type="text"
+                className="form-control"
+                name="course"
+                value={student.course || ""}
                 onChange={handleChange}
               />
             </div>
