@@ -1,32 +1,76 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Deletestudent = () => {
+const UpdateStudent = () => {
   const [id, setId] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [student, setStudent] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
 
-  const handleDelete = async () => {
+  const [loading, setLoading] = useState(false);
+  const [found, setFound] = useState(false);
+  const navigate = useNavigate();
+
+  // 🔍 FETCH student by ID
+  const fetchStudent = async () => {
     if (!id.trim()) {
-      alert("⚠️ Please enter a valid Student ID");
+      alert("⚠️ Please enter Student ID");
       return;
     }
 
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete student with ID ${id}?`
-    );
-    if (!confirmDelete) return;
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `https://student-backend-w1bp.onrender.com/employees/${id}`
+      );
+
+      if (response.data) {
+        setStudent(response.data); // Autofill data
+        setFound(true);
+      } else {
+        alert("❌ No student found with this ID");
+        setFound(false);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("❌ Student not found!");
+      setFound(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✏ Input Handler
+  const handleChange = (e) => {
+    setStudent({ ...student, [e.target.name]: e.target.value });
+  };
+
+  // 💾 UPDATE student
+  const updateStudent = async () => {
+    const userEmail = localStorage.getItem("email");
+
+    if (!userEmail) {
+      alert("⚠️ Please login first!");
+      navigate("/login");
+      return;
+    }
 
     try {
       setLoading(true);
-      const response = await axios.delete(
-        `http://localhost:9897/employees/delete/${id}`
+
+      await axios.put(
+        `https://student-backend-w1bp.onrender.com/employees/update/${id}?email=${userEmail}`,
+        student
       );
 
-      alert(response.data || `✅ Student with ID ${id} deleted successfully`);
-      setId("");
+      alert("✅ Student updated successfully!");
+      navigate("/features");
     } catch (error) {
-      console.error("Error deleting student:", error);
-      alert("❌ Failed to delete student. Please check ID or try again.");
+      console.error(error);
+      alert("❌ Failed to update student");
     } finally {
       setLoading(false);
     }
@@ -38,38 +82,92 @@ const Deletestudent = () => {
       style={{
         minHeight: "100vh",
         background: "linear-gradient(to right, #1c92d2, #f2fcfe)",
+        padding: "20px",
       }}
     >
-      <div className="card p-4 shadow-lg border-0" style={{ width: "400px" }}>
-        <h3 className="text-center text-danger mb-3 fw-bold">
-          🗑 Delete Student
+      <div
+        className="card p-4 shadow-lg border-0"
+        style={{ width: "450px", borderRadius: "20px" }}
+      >
+        <h3 className="text-center text-primary fw-bold mb-3">
+          ✏ Update Student
         </h3>
 
+        {/* ID Input */}
         <div className="mb-3">
-          <label htmlFor="studentId" className="form-label fw-semibold">
-            Student ID
-          </label>
+          <label className="form-label fw-semibold">Student ID</label>
           <input
             type="number"
-            id="studentId"
             className="form-control"
-            placeholder="Enter Student ID"
+            placeholder="Enter Student ID (e.g., 1234)"
             value={id}
             onChange={(e) => setId(e.target.value)}
-            disabled={loading}
           />
         </div>
 
         <button
-          className="btn btn-danger w-100 fw-bold"
-          onClick={handleDelete}
+          className="btn btn-primary w-100 mb-3 fw-bold"
+          onClick={fetchStudent}
           disabled={loading}
         >
-          {loading ? "Deleting..." : "Delete Student"}
+          {loading ? "Fetching..." : "🔍 Fetch Student"}
+        </button>
+
+        {/* Autofilled Update Form */}
+        {found && (
+          <>
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Name</label>
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                value={student.name}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Email</label>
+              <input
+                type="email"
+                className="form-control"
+                name="email"
+                value={student.email}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Phone</label>
+              <input
+                type="text"
+                className="form-control"
+                name="phone"
+                value={student.phone}
+                onChange={handleChange}
+              />
+            </div>
+
+            <button
+              className="btn btn-success w-100 fw-bold"
+              onClick={updateStudent}
+              disabled={loading}
+            >
+              {loading ? "Updating..." : "💾 Update Student"}
+            </button>
+          </>
+        )}
+
+        <button
+          className="btn btn-dark w-100 mt-3 fw-bold"
+          onClick={() => navigate("/features")}
+        >
+          ⬅ Back to Dashboard
         </button>
       </div>
     </div>
   );
 };
 
-export default Deletestudent;
+export default UpdateStudent;
