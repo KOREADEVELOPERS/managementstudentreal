@@ -10,7 +10,6 @@ const UpdateStudent = () => {
     phone: "",
     address: "",
     course: "",
-    createdBy: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -19,22 +18,30 @@ const UpdateStudent = () => {
 
   // 🔍 FETCH student by ID
   const fetchStudent = async () => {
+    const email = localStorage.getItem("email");
+
     if (!id.trim()) {
       alert("⚠️ Please enter Student ID");
+      return;
+    }
+
+    if (!email) {
+      alert("⚠️ Please login first");
+      navigate("/login");
       return;
     }
 
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://student-backend-w1bp.onrender.com/employees/get/${id}`
+        `https://student-backend-w1bp.onrender.com/employees/get/${id}?email=${email}`
       );
 
       setStudent(response.data); // Autofill data
       setFound(true);
     } catch (error) {
       console.error(error);
-      alert("❌ Student not found!");
+      alert(error.response?.data || "❌ Student not found!");
       setFound(false);
     } finally {
       setLoading(false);
@@ -48,27 +55,26 @@ const UpdateStudent = () => {
 
   // 💾 UPDATE student
   const updateStudent = async () => {
-    const userEmail = localStorage.getItem("email");
+    const email = localStorage.getItem("email");
 
-    if (!userEmail) {
-      alert("⚠️ Please login first!");
+    if (!email) {
+      alert("⚠️ Please login first");
       navigate("/login");
       return;
     }
 
     try {
       setLoading(true);
-
       await axios.put(
-        `https://student-backend-w1bp.onrender.com/employees/update/${id}`,
-        { ...student, createdBy: userEmail }
+        `https://student-backend-w1bp.onrender.com/employees/update/${id}?email=${email}`,
+        student
       );
 
       alert("✅ Student updated successfully!");
       navigate("/features");
     } catch (error) {
       console.error(error);
-      alert("❌ Failed to update student");
+      alert(error.response?.data || "❌ Failed to update student");
     } finally {
       setLoading(false);
     }
@@ -97,7 +103,7 @@ const UpdateStudent = () => {
           <input
             type="text"
             className="form-control"
-            placeholder="Enter Student ID (e.g., 68e081913932463667)"
+            placeholder="Enter Student ID"
             value={id}
             onChange={(e) => setId(e.target.value)}
           />
