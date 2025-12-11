@@ -27,28 +27,68 @@ const Homepage_login = () => {
   };
 
   return (
-    <div className="login-page">
-      <div className="card shadow-lg p-4" data-aos="zoom-in">
-        <div className="text-center mb-3">
-          <h3 className="mt-2 text-dark">Student Login</h3>
+    <div 
+      className="d-flex align-items-center justify-content-center vh-100" 
+      style={{ background: "linear-gradient(to right, #6a11cb, #2575fc)" }}
+    >
+      <div 
+        className="card shadow-lg p-5 rounded-4" 
+        data-aos="zoom-in" 
+        style={{ width: "380px", transition: "transform 0.3s, box-shadow 0.3s" }}
+        onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.boxShadow = "0 15px 30px rgba(0,0,0,0.2)" }}
+        onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 .5rem 1rem rgba(0,0,0,.15)" }}
+      >
+        <div className="text-center mb-4">
+          <h2 className="fw-bold text-primary">Welcome Back</h2>
+          <p className="text-muted">Login to your student account</p>
         </div>
+
         <form onSubmit={handleLogin}>
           <div className="mb-3">
-            <label>Email address</label>
-            <input type="email" className="form-control" required value={email}
-              onChange={(e) => setEmail(e.target.value)} />
+            <label className="form-label fw-semibold">Email Address</label>
+            <input
+              type="email"
+              className="form-control form-control-lg"
+              placeholder="Enter your email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
+
           <div className="mb-3">
-            <label>Password</label>
-            <input type="password" className="form-control" required value={password}
-              onChange={(e) => setPassword(e.target.value)} />
+            <label className="form-label fw-semibold">Password</label>
+            <input
+              type="password"
+              className="form-control form-control-lg"
+              placeholder="Enter your password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
-          
+
           {error && <div className="text-danger mb-3 text-center">{error}</div>}
-          <button type="submit" className="btn btn-primary w-100 fw-bold">Login</button>
-          <div className="text-center mt-3">
-            <small>Don't have an account?
-              <a onClick={() => navigate("/register")} href="#"> Register</a></small>
+
+          <button 
+            type="submit" 
+            className="btn btn-primary w-100 btn-lg fw-bold" 
+            style={{ background: "linear-gradient(90deg, #6a11cb, #2575fc)", border: "none" }}
+          >
+            Login
+          </button>
+
+          <div className="text-center mt-4">
+            <small className="text-muted">
+              Don't have an account?{" "}
+              <a 
+                onClick={() => navigate("/register")} 
+                href="#" 
+                className="fw-bold text-decoration-none text-primary"
+              >
+                Register
+              </a>
+            </small>
           </div>
         </form>
       </div>
