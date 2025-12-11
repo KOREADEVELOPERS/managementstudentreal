@@ -10,7 +10,9 @@ const Homepage_login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  useEffect(() => { AOS.init({ duration: 1000 }); }, []);
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -26,6 +28,11 @@ const Homepage_login = () => {
     }
   };
 
+  // OPTIONAL forgot password handler
+  const handleForgotPassword = () => {
+    navigate("/forgot-password");
+  };
+
   return (
     <div className="login-page">
       <div className="card shadow-lg p-4" data-aos="zoom-in">
@@ -35,19 +42,49 @@ const Homepage_login = () => {
         <form onSubmit={handleLogin}>
           <div className="mb-3">
             <label>Email address</label>
-            <input type="email" className="form-control" required value={email}
-              onChange={(e) => setEmail(e.target.value)} />
+            <input
+              type="email"
+              className="form-control"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
+
           <div className="mb-3">
             <label>Password</label>
-            <input type="password" className="form-control" required value={password}
-              onChange={(e) => setPassword(e.target.value)} />
+            <input
+              type="password"
+              className="form-control"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
-          {error && <div className="text-danger mb-3 text-center">{error}</div>}
-          <button type="submit" className="btn btn-primary w-100 fw-bold">Login</button>
+
+          {/* Forgot Password */}
+          <div className="text-end mb-2">
+            <a href="#" onClick={handleForgotPassword} className="text-primary">
+              Forgot Password?
+            </a>
+          </div>
+
+          {error && (
+            <div className="text-danger mb-3 text-center">{error}</div>
+          )}
+
+          <button type="submit" className="btn btn-primary w-100 fw-bold">
+            Login
+          </button>
+
           <div className="text-center mt-3">
-            <small>Don't have an account?
-              <a onClick={() => navigate("/register")} href="#"> Register</a></small>
+            <small>
+              Don't have an account?
+              <a onClick={() => navigate("/register")} href="#">
+                {" "}
+                Register
+              </a>
+            </small>
           </div>
         </form>
       </div>
