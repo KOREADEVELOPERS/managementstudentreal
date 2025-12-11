@@ -21,18 +21,18 @@ const AddStudents = () => {
     setStudents(updated);
   };
 
-  // ➕ Add Student
+  // ➕ Add new student field
   const addStudentForm = () => {
     setStudents([...students, { name: "", email: "", phone: "" }]);
   };
 
-  // ❌ Remove Student
+  // ❌ Remove student
   const removeStudentForm = (index) => {
     const updated = students.filter((_, i) => i !== index);
     setStudents(updated);
   };
 
-  // ✅ Validation
+  // 🔍 Validation function
   const validateForm = () => {
     const errs = [];
     students.forEach((student, i) => {
@@ -46,7 +46,7 @@ const AddStudents = () => {
     return errs.every((err) => Object.keys(err).length === 0);
   };
 
-  // 🚀 Submit
+  // 🚀 Submit Form
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -58,6 +58,7 @@ const AddStudents = () => {
       return;
     }
 
+    // ⭐ Correct API call (backend sets createdBy itself)
     StudentService.saveMultipleStudents(students, email)
       .then(() => {
         alert("✅ Students added successfully!");
@@ -96,52 +97,57 @@ const AddStudents = () => {
           {students.map((student, index) => (
             <div
               key={index}
-              className="border rounded p-3 mb-4 bg-light shadow-sm position-relative"
+              className="border rounded p-3 mb-4 bg-light shadow-sm"
               data-aos="fade-up"
             >
               <h5 className="mb-3 text-secondary fw-semibold">
                 Student {index + 1}
               </h5>
+
               <div className="row g-3">
+                {/* Name */}
                 <div className="col-md-4">
                   <label className="form-label">Name</label>
                   <input
                     type="text"
                     className={`form-control ${errors[index]?.name ? "is-invalid" : ""}`}
                     name="name"
-                    placeholder="Enter full name"
                     value={student.name}
+                    placeholder="Enter full name"
                     onChange={(e) => handleChange(index, e)}
                   />
                   <div className="invalid-feedback">{errors[index]?.name}</div>
                 </div>
 
+                {/* Email */}
                 <div className="col-md-4">
                   <label className="form-label">Email</label>
                   <input
                     type="email"
                     className={`form-control ${errors[index]?.email ? "is-invalid" : ""}`}
                     name="email"
-                    placeholder="Enter email"
                     value={student.email}
+                    placeholder="Enter email"
                     onChange={(e) => handleChange(index, e)}
                   />
                   <div className="invalid-feedback">{errors[index]?.email}</div>
                 </div>
 
+                {/* Phone */}
                 <div className="col-md-3">
                   <label className="form-label">Phone</label>
                   <input
                     type="tel"
                     className={`form-control ${errors[index]?.phone ? "is-invalid" : ""}`}
                     name="phone"
-                    placeholder="10-digit phone"
                     value={student.phone}
+                    placeholder="10-digit number"
                     onChange={(e) => handleChange(index, e)}
                   />
                   <div className="invalid-feedback">{errors[index]?.phone}</div>
                 </div>
 
+                {/* Remove Button */}
                 {students.length > 1 && (
                   <div className="col-md-1 d-flex align-items-end">
                     <button
@@ -157,6 +163,7 @@ const AddStudents = () => {
             </div>
           ))}
 
+          {/* Buttons */}
           <div className="d-flex justify-content-between">
             <button
               type="button"
@@ -172,6 +179,7 @@ const AddStudents = () => {
           </div>
         </form>
 
+        {/* Back Button */}
         <div className="text-center mt-4">
           <button
             onClick={() => navigate("/features")}
