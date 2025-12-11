@@ -43,14 +43,11 @@ const Homepage_login = () => {
             <input type="password" className="form-control" required value={password}
               onChange={(e) => setPassword(e.target.value)} />
           </div>
-
-          {/* Forgot Password link */}
           <div className="text-end mb-3">
             <small>
               <a onClick={() => navigate("/forgot-password")} href="#">Forgot Password?</a>
             </small>
           </div>
-
           {error && <div className="text-danger mb-3 text-center">{error}</div>}
           <button type="submit" className="btn btn-primary w-100 fw-bold">Login</button>
           <div className="text-center mt-3">
