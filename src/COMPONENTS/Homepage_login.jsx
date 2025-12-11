@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
-import StudentService from "../Service/Studentservice";
+import StudentService from "../Service/StudentService";
 
 const Homepage_login = () => {
   const navigate = useNavigate();
@@ -43,11 +43,7 @@ const Homepage_login = () => {
             <input type="password" className="form-control" required value={password}
               onChange={(e) => setPassword(e.target.value)} />
           </div>
-          <div className="text-end mb-3">
-            <small>
-              <a onClick={() => navigate("/forgot-password")} href="#">Forgot Password?</a>
-            </small>
-          </div>
+          
           {error && <div className="text-danger mb-3 text-center">{error}</div>}
           <button type="submit" className="btn btn-primary w-100 fw-bold">Login</button>
           <div className="text-center mt-3">
