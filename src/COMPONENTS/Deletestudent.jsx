@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const UpdateStudent = () => {
+const UpdateStudent = () => {  
   const [id, setId] = useState("");
   const [student, setStudent] = useState({
     name: "",
