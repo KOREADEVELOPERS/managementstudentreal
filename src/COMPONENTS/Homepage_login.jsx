@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css"; 
 import { useNavigate } from "react-router-dom";
-import StudentService from "../Service/StudentService";
+import StudentService from "../Service/Studentservice";
 
 const Homepage_login = () => {
   const navigate = useNavigate();
