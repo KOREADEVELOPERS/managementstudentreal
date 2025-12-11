@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const UpdateStudent = () => {
-  const [id, setId] = useState("");
+  const [id, setId] = useState(""); // MongoDB ID (string)
   const [student, setStudent] = useState({
     name: "",
     email: "",
@@ -24,7 +24,7 @@ const UpdateStudent = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://student-backend-w1bp.onrender.com/employees/${id}`
+        `https://student-backend-w1bp.onrender.com/employees/get/${id}`
       );
 
       if (response.data) {
@@ -97,9 +97,9 @@ const UpdateStudent = () => {
         <div className="mb-3">
           <label className="form-label fw-semibold">Student ID</label>
           <input
-            type="number"
+            type="text" // ✅ change here
             className="form-control"
-            placeholder="Enter Student ID (e.g., 1234)"
+            placeholder="Enter Student ID (e.g., 68e081913932463667)"
             value={id}
             onChange={(e) => setId(e.target.value)}
           />
