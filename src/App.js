@@ -10,6 +10,7 @@ import Studentsfeatures from './COMPONENTS/Studentsfeatures';
  import Searchstudent from './COMPONENTS/Searchstudent';
  import Deletestudent from './COMPONENTS/Deletestudent';
  import Registeredpage from './COMPONENTS/Registeredpage';
+import ForgotPassword from "./COMPONENTS/Forgotpassword";
   // ✅ Fixed import
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/sulabh" element={<Viewstudent />} />
           <Route path="/delete" element={<Deletestudent />} />
           <Route path="/Register" element={<Registeredpage />} />
+         <Route path="/forgot" element={<ForgotPassword />} />
         </Routes>
       </BrowserRouter>
     </>
