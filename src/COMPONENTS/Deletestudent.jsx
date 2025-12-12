@@ -1,3 +1,4 @@
+// src/COMPONENTS/UpdateStudent.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +10,7 @@ const UpdateStudent = () => {
   const [found, setFound] = useState(false);
   const navigate = useNavigate();
 
-  const BASE_URL = "https://student-backend-w1bp.onrender.com/students";
+  const BASE_URL = "https://student-backend-w1bp.onrender.com/employees";
 
   // Fetch student by ID
   const fetchStudent = async () => {
@@ -40,21 +41,29 @@ const UpdateStudent = () => {
 
   // Update student
   const updateStudent = async () => {
-  if (!id.trim()) return alert("⚠️ Student ID missing");
+    if (!id.trim()) return alert("⚠️ Student ID missing");
 
-  try {
-    setLoading(true);
-    const res = await axios.put(`${BASE_URL}/update/${id}`, student);
-    alert("✅ Student updated successfully!\nName: " + res.data.name);
-    navigate("/features");
-  } catch (err) {
-    console.error(err);
-    alert(err.response?.data || "❌ Failed to update student");
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      setLoading(true);
+      const res = await axios.put(`${BASE_URL}/update/${id}`, student);
+      const updated = res.data;
 
+      // Proper popup with updated details
+      alert(
+        "✅ Student updated successfully!\n" +
+        "Name: " + updated.name + "\n" +
+        "Email: " + updated.email + "\n" +
+        "Phone: " + updated.phone
+      );
+
+      navigate("/features"); // Redirect after update
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data || "❌ Failed to update student");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
