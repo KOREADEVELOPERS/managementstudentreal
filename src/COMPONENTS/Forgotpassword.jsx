@@ -24,7 +24,7 @@ const ForgotPassword = () => {
     } catch (err) {
       alert("No user found with this email"); // 🔹 Error handling
     }
-
+  
     setLoading(false);
   };
 
