@@ -3,7 +3,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
 import StudentService from "../Service/Studentservice";
-
+  
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
