@@ -1,197 +1,114 @@
-import React, { useState } from "react";
+// src/pages/UpdateStudent.jsx
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-const UpdateStudent = () => {  
-  const [id, setId] = useState("");
-  const [student, setStudent] = useState({ 
+const UpdateStudent = () => {
+  const { id } = useParams(); // MongoDB ID
+  const navigate = useNavigate();
+
+  const [student, setStudent] = useState({
     name: "",
     email: "",
     phone: "",
-    address: "",
-    course: "",
   });
 
-  const [loading, setLoading] = useState(false);
-  const [found, setFound] = useState(false);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
-  // 🔍 FETCH student by ID
-  const fetchStudent = async () => {
-    const email = localStorage.getItem("email");
+  // 🎯 Backend URL
+  const BASE_URL = "https://studentbackenddemo-3p3i.onrender.com/students";
 
-    if (!id.trim()) {
-      alert("⚠️ Please enter Student ID");
-      return;
-    }
+  // 📌 FETCH STUDENT DATA
+  useEffect(() => {
+    axios
+      .get(`${BASE_URL}/get/${id}`)
+      .then((res) => {
+        setStudent(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("❌ Error: Student not found!");
+        navigate("/view");
+      });
+  }, [id]);
 
-    if (!email) {
-      alert("⚠️ Please login first");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `https://student-backend-w1bp.onrender.com/employees/get/${id}?email=${email}`
-      );
-
-      setStudent(response.data); // Autofill data
-      setFound(true);
-    } catch (error) {
-      console.error(error);
-      alert(error.response?.data || "❌ Student not found!");
-      setFound(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ✏ Input Handler
+  // 🔄 Handle Input Change
   const handleChange = (e) => {
     setStudent({ ...student, [e.target.name]: e.target.value });
   };
 
-  // 💾 UPDATE student
-  const updateStudent = async () => {
-    const email = localStorage.getItem("email");
+  // 🚀 UPDATE STUDENT
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-    if (!email) {
-      alert("⚠️ Please login first");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      await axios.put(
-        `https://student-backend-w1bp.onrender.com/employees/update/${id}?email=${email}`,
-        student
-      );
-
-      alert("✅ Student updated successfully!");
-      navigate("/features");
-    } catch (error) {
-      console.error(error);
-      alert(error.response?.data || "❌ Failed to update student");
-    } finally {
-      setLoading(false);
-    }
+    axios
+      .put(`${BASE_URL}/update/${id}`, student)
+      .then(() => {
+        alert("✅ Student Updated Successfully!");
+        navigate("/view");
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("❌ Update Failed!");
+      });
   };
 
+  if (loading) {
+    return <h3 className="text-center mt-5">Loading...</h3>;
+  }
+
   return (
-    <div
-      className="d-flex justify-content-center align-items-center"
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(to right, #1c92d2, #f2fcfe)",
-        padding: "20px",
-      }}
-    >
-      <div
-        className="card p-4 shadow-lg border-0"
-        style={{ width: "450px", borderRadius: "20px" }}
+    <div className="container mt-5">
+      <h2 className="text-center fw-bold mb-4">✏ Update Student</h2>
+
+      <form
+        onSubmit={handleSubmit}
+        className="shadow p-4 rounded"
+        style={{ maxWidth: "600px", margin: "auto" }}
       >
-        <h3 className="text-center text-primary fw-bold mb-3">
-          ✏ Update Student
-        </h3>
+        {/* Name */}
+        <label className="form-label">Name</label>
+        <input
+          type="text"
+          name="name"
+          className="form-control mb-3"
+          value={student.name}
+          onChange={handleChange}
+        />
 
-        {/* ID Input */}
-        <div className="mb-3">
-          <label className="form-label fw-semibold">Student ID</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Enter Student ID"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
-          />
-        </div>
+        {/* Email */}
+        <label className="form-label">Email</label>
+        <input
+          type="email"
+          name="email"
+          className="form-control mb-3"
+          value={student.email}
+          onChange={handleChange}
+        />
 
-        <button
-          className="btn btn-primary w-100 mb-3 fw-bold"
-          onClick={fetchStudent}
-          disabled={loading}
-        >
-          {loading ? "Fetching..." : "🔍 Fetch Student"}
+        {/* Phone */}
+        <label className="form-label">Phone</label>
+        <input
+          type="text"
+          name="phone"
+          className="form-control mb-3"
+          value={student.phone}
+          onChange={handleChange}
+        />
+
+        <button type="submit" className="btn btn-primary w-100 fw-bold">
+          ✔ Update Student
         </button>
 
-        {/* Autofilled Update Form */}
-        {found && (
-          <>
-            <div className="mb-3">
-              <label className="form-label fw-semibold">Name</label>
-              <input
-                type="text"
-                className="form-control"
-                name="name"
-                value={student.name}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label fw-semibold">Email</label>
-              <input
-                type="email"
-                className="form-control"
-                name="email"
-                value={student.email}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label fw-semibold">Phone</label>
-              <input
-                type="text"
-                className="form-control"
-                name="phone"
-                value={student.phone}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label fw-semibold">Address</label>
-              <input
-                type="text"
-                className="form-control"
-                name="address"
-                value={student.address || ""}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label fw-semibold">Course</label>
-              <input
-                type="text"
-                className="form-control"
-                name="course"
-                value={student.course || ""}
-                onChange={handleChange}
-              />
-            </div>
-
-            <button
-              className="btn btn-success w-100 fw-bold"
-              onClick={updateStudent}
-              disabled={loading}
-            >
-              {loading ? "Updating..." : "💾 Update Student"}
-            </button>
-          </>
-        )}
-
         <button
-          className="btn btn-dark w-100 mt-3 fw-bold"
-          onClick={() => navigate("/features")}
+          type="button"
+          onClick={() => navigate("/view")}
+          className="btn btn-dark w-100 mt-3"
         >
-          ⬅ Back to Dashboard
+          ⬅ Back
         </button>
-      </div>
+      </form>
     </div>
   );
 };
