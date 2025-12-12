@@ -70,13 +70,13 @@ const Homepage_login = () => {
 
           {/* ⭐ ADDED FORGOT PASSWORD HERE ⭐ */}
           <div className="text-end mb-3">
-            <a 
-              href="#" 
-              className="text-primary fw-semibold text-decoration-none"
-              onClick={() => alert("Forgot Password feature coming soon!")}
+        <a 
+          href="#" 
+          className="text-primary fw-semibold text-decoration-none"
+            onClick={() => navigate("/forgot")}
             >
-              Forgot Password?
-            </a>
+  Forgot Password?
+</a>
           </div>
 
           {error && <div className="text-danger mb-3 text-center">{error}</div>}
