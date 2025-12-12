@@ -3,49 +3,52 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
 import StudentService from "../Service/Studentservice";
-  
+
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => { AOS.init({ duration: 1000 }); }, []);
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+  }, []);
 
+  // ⭐ Updated handleSend function to show password in popup
   const handleSend = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage("");
 
     try {
-      await StudentService.sendPasswordReset({ email });
-      setMessage("✔ If this email exists, reset instructions were sent.");
-    } catch {
-      setMessage("✔ If this email exists, reset instructions were sent.");
+      const res = await StudentService.sendPasswordReset({ email });
+      alert("Your Password is: " + res.data); // 🔹 POPUP SHOW PASSWORD
+    } catch (err) {
+      alert("No user found with this email"); // 🔹 Error handling
     }
 
     setLoading(false);
   };
 
   return (
-    <div 
-      className="d-flex align-items-center justify-content-center vh-100" 
+    <div
+      className="d-flex align-items-center justify-content-center vh-100"
       style={{ background: "linear-gradient(to right, #2575fc, #6a11cb)" }}
     >
-      <div 
-        className="card shadow-lg p-5 rounded-4" 
+      <div
+        className="card shadow-lg p-5 rounded-4"
         data-aos="fade-up"
         style={{ width: "400px" }}
       >
         <div className="text-center mb-4">
-          <img 
+          <img
             src="https://cdn-icons-png.flaticon.com/512/2889/2889676.png"
             alt="reset"
             width="70"
             className="mb-3"
           />
           <h3 className="fw-bold text-primary">Reset Password</h3>
-          <p className="text-muted">Enter your email to receive reset instructions</p>
+          <p className="text-muted">
+            Enter your email to receive reset instructions
+          </p>
         </div>
 
         <form onSubmit={handleSend}>
@@ -61,22 +64,21 @@ const ForgotPassword = () => {
             />
           </div>
 
-          {message && (
-            <p className="text-success text-center fw-semibold">{message}</p>
-          )}
-
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
             className="btn btn-primary w-100 btn-lg fw-bold"
-            style={{ background: "linear-gradient(90deg, #2575fc, #6a11cb)", border: "none" }}
+            style={{
+              background: "linear-gradient(90deg, #2575fc, #6a11cb)",
+              border: "none",
+            }}
           >
             {loading ? "Sending..." : "Send Reset Link"}
           </button>
 
           <div className="text-center mt-4">
-            <a 
-              href="#" 
+            <a
+              href="#"
               onClick={() => navigate(-1)}
               className="text-primary fw-semibold text-decoration-none"
             >
