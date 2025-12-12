@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const UpdateStudent = () => {  
   const [id, setId] = useState("");
-  const [student, setStudent] = useState({
+  const [student, setStudent] = useState({ 
     name: "",
     email: "",
     phone: "",
