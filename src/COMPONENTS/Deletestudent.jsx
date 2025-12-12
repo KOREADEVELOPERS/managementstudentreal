@@ -40,20 +40,21 @@ const UpdateStudent = () => {
 
   // Update student
   const updateStudent = async () => {
-    if (!id.trim()) return alert("⚠️ Student ID missing");
+  if (!id.trim()) return alert("⚠️ Student ID missing");
 
-    try {
-      setLoading(true);
-      await axios.put(`${BASE_URL}/update/${id}`, student);
-      alert("✅ Student updated successfully!");
-      navigate("/features");
-    } catch (err) {
-      console.error(err);
-      alert(err.response?.data || "❌ Failed to update student");
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    setLoading(true);
+    const res = await axios.put(`${BASE_URL}/update/${id}`, student);
+    alert("✅ Student updated successfully!\nName: " + res.data.name);
+    navigate("/features");
+  } catch (err) {
+    console.error(err);
+    alert(err.response?.data || "❌ Failed to update student");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div
