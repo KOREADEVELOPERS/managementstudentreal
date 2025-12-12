@@ -10,9 +10,7 @@ const Homepage_login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    AOS.init({ duration: 1000 });
-  }, []);
+  useEffect(() => { AOS.init({ duration: 1000 }); }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,36 +27,28 @@ const Homepage_login = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center p-4"
-      style={{
-        backgroundImage:
-          "url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1350&q=80')",
-      }}
+    <div 
+      className="d-flex align-items-center justify-content-center vh-100" 
+      style={{ background: "linear-gradient(to right, #6a11cb, #2575fc)" }}
     >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/50"></div>
-
-      <div
-        data-aos="zoom-in"
-        className="relative z-10 bg-white/90 backdrop-blur-lg shadow-2xl rounded-3xl p-8 w-full max-w-md transition transform hover:-translate-y-1 hover:shadow-3xl"
+      <div 
+        className="card shadow-lg p-5 rounded-4" 
+        data-aos="zoom-in" 
+        style={{ width: "380px", transition: "transform 0.3s, box-shadow 0.3s" }}
+        onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.boxShadow = "0 15px 30px rgba(0,0,0,0.2)" }}
+        onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 .5rem 1rem rgba(0,0,0,.15)" }}
       >
-        <div className="text-center mb-6">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png"
-            alt="Student Login"
-            className="w-20 mx-auto mb-3 drop-shadow-lg"
-          />
-          <h2 className="text-3xl font-extrabold text-blue-700">Student Login</h2>
-          <p className="text-gray-600 mt-1">Access your academic dashboard</p>
+        <div className="text-center mb-4">
+          <h2 className="fw-bold text-primary">Welcome Back</h2>
+          <p className="text-muted">Login to your student account</p>
         </div>
 
         <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <label className="font-semibold text-gray-700">Email Address</label>
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Email Address</label>
             <input
               type="email"
-              className="mt-1 w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="form-control form-control-lg"
               placeholder="Enter your email"
               required
               value={email}
@@ -67,10 +57,10 @@ const Homepage_login = () => {
           </div>
 
           <div className="mb-3">
-            <label className="font-semibold text-gray-700">Password</label>
+            <label className="form-label fw-semibold">Password</label>
             <input
               type="password"
-              className="mt-1 w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="form-control form-control-lg"
               placeholder="Enter your password"
               required
               value={password}
@@ -78,39 +68,38 @@ const Homepage_login = () => {
             />
           </div>
 
-          <div className="text-right mb-4">
-            <button
-              type="button"
+          {/* ⭐ ADDED FORGOT PASSWORD HERE ⭐ */}
+          <div className="text-end mb-3">
+            <a 
+              href="#" 
+              className="text-primary fw-semibold text-decoration-none"
               onClick={() => alert("Forgot Password feature coming soon!")}
-              className="text-blue-600 font-semibold hover:underline"
             >
               Forgot Password?
-            </button>
+            </a>
           </div>
 
-          {error && (
-            <div className="text-red-600 mb-3 text-center font-semibold">
-              {error}
-            </div>
-          )}
+          {error && <div className="text-danger mb-3 text-center">{error}</div>}
 
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-bold shadow-lg hover:opacity-90 transition"
+          <button 
+            type="submit" 
+            className="btn btn-primary w-100 btn-lg fw-bold" 
+            style={{ background: "linear-gradient(90deg, #6a11cb, #2575fc)", border: "none" }}
           >
             Login
           </button>
 
-          <div className="text-center mt-5">
-            <p className="text-gray-700">
+          <div className="text-center mt-4">
+            <small className="text-muted">
               Don't have an account?{" "}
-              <span
-                onClick={() => navigate("/register")}
-                className="text-blue-700 font-bold cursor-pointer hover:underline"
+              <a 
+                onClick={() => navigate("/register")} 
+                href="#" 
+                className="fw-bold text-decoration-none text-primary"
               >
                 Register
-              </span>
-            </p>
+              </a>
+            </small>
           </div>
         </form>
       </div>
